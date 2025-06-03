@@ -1,0 +1,3 @@
+dotenv
+websocket-client
+pyaudio
