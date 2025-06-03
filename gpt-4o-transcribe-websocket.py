@@ -75,11 +75,11 @@ def on_message(ws, message):
         if event_type == "response.text.delta":
             delta_text = data.get("delta", "")
             if delta_text:
-                print(f"\nDelta: {delta_text}", end=' ', flush=True)
+                print(f"📥: {delta_text}")
         if event_type == "response.text.done":
             final_text = data.get("text", "")
             if final_text:
-                print("\nFinal text:", final_text)
+                print("📨:", final_text)
         if event_type == "conversation.item.input_audio_transcription.completed":
             print(data["transcript"])
         if event_type == "item":
@@ -101,14 +101,23 @@ def on_close(ws, close_status_code, close_msg):
     stream.close()
     audio_interface.terminate()
 
-print("Connecting to OpenAI Realtime API...")
-ws_app = websocket.WebSocketApp(
-    url,
-    header=headers,
-    on_open=on_open,
-    on_message=on_message,
-    on_error=on_error,
-    on_close=on_close
-)
+def main():
+    try:
+        print("Connecting to OpenAI Realtime API...")
+        ws_app = websocket.WebSocketApp(
+            url,
+            header=headers,
+            on_open=on_open,
+            on_message=on_message,
+            on_error=on_error,
+            on_close=on_close
+        )
 
-ws_app.run_forever()
+        ws_app.run_forever()
+    except KeyboardInterrupt:
+        print("Interrupted by user. Closing...")
+    finally:
+        ws_app.close()
+
+if __name__ == "__main__":
+    main()
